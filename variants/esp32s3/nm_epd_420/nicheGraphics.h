@@ -34,6 +34,7 @@
 #include "main.h"
 #include "mesh/NodeDB.h"
 #include "mesh/generated/meshtastic/telemetry.pb.h"
+#include "modules/Telemetry/UnitConversions.h"
 
 #if defined(NM_EPD_420_BW_INKHUD)
 namespace NicheGraphics::InkHUD
@@ -108,10 +109,13 @@ class NMEnvironmentApplet : public Applet
 
         setFont(fontLarge);
         char value[32];
+        const bool displayFahrenheit = config.display.units == meshtastic_Config_DisplayConfig_DisplayUnits_IMPERIAL;
+        const char *temperatureUnit = displayFahrenheit ? "F" : "C";
         if (hasTemp) {
-            snprintf(value, sizeof(value), "%.1f C", env.temperature);
+            const float temperature = displayFahrenheit ? UnitConversions::CelsiusToFahrenheit(env.temperature) : env.temperature;
+            snprintf(value, sizeof(value), "%.1f %s", temperature, temperatureUnit);
         } else {
-            snprintf(value, sizeof(value), "--.- C");
+            snprintf(value, sizeof(value), "--.- %s", temperatureUnit);
         }
         printAt(0, Applet::getHeaderHeight() + 8, value);
 
