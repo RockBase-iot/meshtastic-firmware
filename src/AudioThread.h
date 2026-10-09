@@ -98,9 +98,8 @@ class AudioThread : public concurrency::OSThread
             return false;
 
         if (tone == NmEpd420Tone::Receive &&
-            (nmEpd420TonePlaying == NmEpd420Tone::Receive ||
-             std::find(nmEpd420ToneQueue.begin(), nmEpd420ToneQueue.end(), NmEpd420Tone::Receive) !=
-                 nmEpd420ToneQueue.end())) {
+            ((nmEpd420TonePlayingValid && nmEpd420TonePlaying == NmEpd420Tone::Receive) ||
+             std::find(nmEpd420ToneQueue.begin(), nmEpd420ToneQueue.end(), NmEpd420Tone::Receive) != nmEpd420ToneQueue.end())) {
             return false;
         }
 
@@ -120,8 +119,7 @@ class AudioThread : public concurrency::OSThread
     void startNmEpd420AudioHardwareTest()
     {
         nmEpd420AudioTestState = NmEpd420AudioTestState::Rttl;
-        LOG_INFO("NM-EPD-420 audio test: MCLK=%d BCLK=%d WS=%d DOUT=%d", DAC_I2S_MCLK, DAC_I2S_BCK, DAC_I2S_WS,
-                 DAC_I2S_DOUT);
+        LOG_INFO("NM-EPD-420 audio test: MCLK=%d BCLK=%d WS=%d DOUT=%d", DAC_I2S_MCLK, DAC_I2S_BCK, DAC_I2S_WS, DAC_I2S_DOUT);
         LOG_INFO("NM-EPD-420 audio test: starting RTTTL");
     }
 #endif
